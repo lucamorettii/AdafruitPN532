@@ -153,129 +153,127 @@
 class Adafruit_PN532
 {
 public:
-  typedef struct
-  {
-    byte size;
-    byte uidByte[10];
-    byte sak;
-    byte atqaByte[2];
-  } Uid;
+    typedef struct
+    {
+        byte size;
+        byte uidByte[10];
+        byte sak;
+        byte atqaByte[2];
+    } Uid;
 
-  Uid targetUid;
+    Uid targetUid;
 
-  Adafruit_PN532();
-  Adafruit_PN532(uint8_t clk, uint8_t miso, uint8_t mosi,
-                 uint8_t ss);                          // Software SPI
-  Adafruit_PN532(uint8_t ss, SPIClass *theSPI = &SPI); // Hardware SPI
-  Adafruit_PN532(uint8_t irq, uint8_t reset,
-                 TwoWire *theWire = &Wire);              // Hardware I2C
-  Adafruit_PN532(uint8_t reset, HardwareSerial *theSer); // Hardware UART
-  bool begin(void);
+    Adafruit_PN532();
+    Adafruit_PN532(uint8_t clk, uint8_t miso, uint8_t mosi,
+                   uint8_t ss);                          // Software SPI
+    Adafruit_PN532(uint8_t ss, SPIClass *theSPI = &SPI); // Hardware SPI
+    Adafruit_PN532(uint8_t irq, uint8_t reset,
+                   TwoWire *theWire = &Wire);              // Hardware I2C
+    Adafruit_PN532(uint8_t reset, HardwareSerial *theSer); // Hardware UART
+    bool begin(void);
 
-  void reset(void);
-  void wakeup(void);
-  void setInterface(uint8_t clk, uint8_t miso, uint8_t mosi, uint8_t ss);
-  void setInterface(uint8_t sdaPin, uint8_t sclPin);
+    void reset(void);
+    void wakeup(void);
+    void setInterface(uint8_t clk, uint8_t miso, uint8_t mosi, uint8_t ss);
+    void setInterface(uint8_t sdaPin, uint8_t sclPin);
 
-  String PICC_GetTypeName(byte sak);
+    String PICC_GetTypeName(byte sak);
 
-  // Generic PN532 functions
-  bool SAMConfig(void);
-  uint32_t getFirmwareVersion(void);
-  bool sendCommandCheckAck(uint8_t *cmd, uint8_t cmdlen, uint16_t timeout = 100);
-  bool writeGPIO(uint8_t pinstate);
-  uint8_t readGPIO(void);
-  bool setPassiveActivationRetries(uint8_t maxRetries);
-  bool powerDown();
+    // Generic PN532 functions
+    bool SAMConfig(void);
+    uint32_t getFirmwareVersion(void);
+    bool sendCommandCheckAck(uint8_t *cmd, uint8_t cmdlen, uint16_t timeout = 100);
+    bool writeGPIO(uint8_t pinstate);
+    uint8_t readGPIO(void);
+    bool setPassiveActivationRetries(uint8_t maxRetries);
+    bool powerDown();
 
-  // ISO14443A functions
-  bool readPassiveTargetID(
-      uint8_t cardbaudrate, uint8_t *uid, uint8_t *uidLength,
-      uint16_t timeout = 0); // timeout 0 means no timeout - will block forever.
-  bool startPassiveTargetIDDetection(uint8_t cardbaudrate = PN532_MIFARE_ISO14443A);
-  bool readDetectedPassiveTargetID(uint8_t *uid, uint8_t *uidLength);
-  bool readDetectedPassiveTargetID();
-  bool inDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength);
-  bool inListPassiveTarget();
-  uint8_t AsTarget();
-  uint8_t getDataTarget(uint8_t *cmd, uint8_t *cmdlen);
-  uint8_t setDataTarget(uint8_t *cmd, uint8_t cmdlen);
-  bool TgInitAsTarget();
-  bool TgGetData(uint8_t *response, uint8_t *responseLength);
-  bool TgSetData(uint8_t *send, uint8_t sendLength);
-  int16_t inRelease(const uint8_t relevantTarget = 0);
+    // ISO14443A functions
+    bool readPassiveTargetID(
+        uint8_t cardbaudrate, uint8_t *uid, uint8_t *uidLength,
+        uint16_t timeout = 0); // timeout 0 means no timeout - will block forever.
+    bool startPassiveTargetIDDetection(uint8_t cardbaudrate = PN532_MIFARE_ISO14443A);
+    bool readDetectedPassiveTargetID(uint8_t *uid, uint8_t *uidLength);
+    bool readDetectedPassiveTargetID();
+    bool inDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength);
+    bool inListPassiveTarget();
+    uint8_t AsTarget();
+    uint8_t getDataTarget(uint8_t *cmd, uint8_t *cmdlen);
+    uint8_t setDataTarget(uint8_t *cmd, uint8_t cmdlen);
+    bool TgInitAsTarget();
+    bool TgGetData(uint8_t *response, uint8_t *responseLength);
+    bool TgSetData(uint8_t *send, uint8_t sendLength);
+    int16_t inRelease(const uint8_t relevantTarget = 0);
 
-  bool EMVinDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength);
+    bool EMVinDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength);
 
-  // Mifare Classic functions
-  bool UnlockBackdoor();
-  bool mifareclassic_WriteBlock0(uint8_t *data);
-  bool mifareclassic_IsFirstBlock(uint32_t uiBlock);
-  bool mifareclassic_IsTrailerBlock(uint32_t uiBlock);
-  uint8_t mifareclassic_AuthenticateBlock(
-      uint8_t *uid, uint8_t uidLen, uint32_t blockNumber, uint8_t keyNumber, uint8_t *keyData);
-  uint8_t mifareclassic_ReadDataBlock(uint8_t blockNumber, uint8_t *data);
-  uint8_t mifareclassic_WriteDataBlock(uint8_t blockNumber, uint8_t *data);
-  uint8_t mifareclassic_FormatNDEF(void);
-  uint8_t mifareclassic_WriteNDEFURI(uint8_t sectorNumber, uint8_t uriIdentifier, const char *url);
+    // Mifare Classic functions
+    bool UnlockBackdoor();
+    bool mifareclassic_WriteBlock0(uint8_t *data);
+    bool mifareclassic_IsFirstBlock(uint32_t uiBlock);
+    bool mifareclassic_IsTrailerBlock(uint32_t uiBlock);
+    uint8_t mifareclassic_AuthenticateBlock(
+        uint8_t *uid, uint8_t uidLen, uint32_t blockNumber, uint8_t keyNumber, uint8_t *keyData);
+    uint8_t mifareclassic_ReadDataBlock(uint8_t blockNumber, uint8_t *data);
+    uint8_t mifareclassic_WriteDataBlock(uint8_t blockNumber, uint8_t *data);
+    uint8_t mifareclassic_FormatNDEF(void);
+    uint8_t mifareclassic_WriteNDEFURI(uint8_t sectorNumber, uint8_t uriIdentifier, const char *url);
 
-  // Mifare Ultralight functions
-  uint8_t mifareultralight_ReadPage(uint8_t page, uint8_t *buffer);
-  uint8_t mifareultralight_WritePage(uint8_t page, uint8_t *data);
+    // Mifare Ultralight functions
+    uint8_t mifareultralight_ReadPage(uint8_t page, uint8_t *buffer);
+    uint8_t mifareultralight_WritePage(uint8_t page, uint8_t *data);
 
-  // NTAG2xx functions
-  uint8_t ntag2xx_ReadPage(uint8_t page, uint8_t *buffer);
-  uint8_t ntag2xx_WritePage(uint8_t page, uint8_t *data);
-  uint8_t ntag2xx_WriteNDEFURI(uint8_t uriIdentifier, char *url, uint8_t dataLen);
+    // NTAG2xx functions
+    uint8_t ntag2xx_ReadPage(uint8_t page, uint8_t *buffer);
+    uint8_t ntag2xx_WritePage(uint8_t page, uint8_t *data);
+    uint8_t ntag2xx_WriteNDEFURI(uint8_t uriIdentifier, char *url, uint8_t dataLen);
 
-  // Felica functions
-  uint8_t felica_Polling(
-      uint16_t systemCode, uint8_t requestCode, uint8_t *idm, uint8_t *pmm, uint16_t *systemCodeResponse,
-      uint16_t timeout = 100);
-  uint8_t felica_SendCommand(const uint8_t *command, uint8_t commandlength, uint8_t responseLength);
-  uint8_t felica_ReadWithoutEncryption(
-      uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
-      uint8_t blockData[][16]);
-  uint8_t felica_WriteWithoutEncryption(
-      uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
-      uint8_t blockData[][16]);
-  uint8_t felica_Release();
+    // Felica functions
+    uint8_t felica_Polling(
+        uint16_t systemCode, uint8_t requestCode, uint8_t *idm, uint8_t *pmm, uint16_t *systemCodeResponse,
+        uint16_t timeout = 100);
+    uint8_t felica_SendCommand(const uint8_t *command, uint8_t commandlength, uint8_t responseLength);
+    uint8_t felica_ReadWithoutEncryption(
+        uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
+        uint8_t blockData[][16]);
+    uint8_t felica_WriteWithoutEncryption(
+        uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
+        uint8_t blockData[][16]);
+    uint8_t felica_Release();
 
-  // Help functions to display formatted text
-  static void PrintHex(const byte *data, const uint32_t numBytes);
-  static void PrintHexChar(const byte *pbtData, const uint32_t numBytes);
+    // Help functions to display formatted text
+    static void PrintHex(const byte *data, const uint32_t numBytes);
+    static void PrintHexChar(const byte *pbtData, const uint32_t numBytes);
 
-  // Per funzioni tessere
-  uint8_t getLastSAK() { return _lastSAK; }
-  uint16_t getLastATQA() { return _lastATQA; }
-  
-  void readdata(uint8_t *buff, uint8_t n);
+    // Per funzioni tessere
+    uint8_t getLastSAK() { return _lastSAK; }
+    uint16_t getLastATQA() { return _lastATQA; }
 
 private:
-  int8_t _irq = -1, _reset = -1, _cs = -1;
-  int8_t _uid[7];        // ISO14443A uid
-  int8_t _uidLen;        // uid len
-  int8_t _key[6];        // Mifare Classic key
-  int8_t _inListedTag;   // Tg number of inlisted tag.
-  uint8_t _felicaIDm[8]; // FeliCa IDm (NFCID2)
-  uint8_t _felicaPMm[8]; // FeliCa PMm (PAD)
+    int8_t _irq = -1, _reset = -1, _cs = -1;
+    int8_t _uid[7];        // ISO14443A uid
+    int8_t _uidLen;        // uid len
+    int8_t _key[6];        // Mifare Classic key
+    int8_t _inListedTag;   // Tg number of inlisted tag.
+    uint8_t _felicaIDm[8]; // FeliCa IDm (NFCID2)
+    uint8_t _felicaPMm[8]; // FeliCa PMm (PAD)
 
-  // Per funzioni tessere
-  uint8_t _lastSAK = 0;
-  uint16_t _lastATQA = 0;
+    // Per funzioni tessere
+    uint8_t _lastSAK = 0;
+    uint16_t _lastATQA = 0;
 
-  // Low level communication functions that handle both SPI and I2C.
-  
-  void writecommand(uint8_t *cmd, uint8_t cmdlen);
-  bool isready();
-  bool waitready(uint16_t timeout);
-  bool readack();
-  bool WriteRegister(uint8_t *reg, uint8_t len);
-  bool InCommunicateThru(uint8_t *data, uint8_t len);
+    // Low level communication functions that handle both SPI and I2C.
+    void readdata(uint8_t *buff, uint8_t n);
+    void writecommand(uint8_t *cmd, uint8_t cmdlen);
+    bool isready();
+    bool waitready(uint16_t timeout);
+    bool readack();
+    bool WriteRegister(uint8_t *reg, uint8_t len);
+    bool InCommunicateThru(uint8_t *data, uint8_t len);
 
-  Adafruit_SPIDevice *spi_dev = NULL;
-  Adafruit_I2CDevice *i2c_dev = NULL;
-  HardwareSerial *ser_dev = NULL;
+    Adafruit_SPIDevice *spi_dev = NULL;
+    Adafruit_I2CDevice *i2c_dev = NULL;
+    HardwareSerial *ser_dev = NULL;
 };
 
 #endif
