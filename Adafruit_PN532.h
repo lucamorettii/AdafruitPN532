@@ -248,6 +248,8 @@ public:
   // Per funzioni tessere
   uint8_t getLastSAK() { return _lastSAK; }
   uint16_t getLastATQA() { return _lastATQA; }
+  
+  void readdata(uint8_t *buff, uint8_t n);
 
 private:
   int8_t _irq = -1, _reset = -1, _cs = -1;
@@ -263,7 +265,7 @@ private:
   uint16_t _lastATQA = 0;
 
   // Low level communication functions that handle both SPI and I2C.
-  void readdata(uint8_t *buff, uint8_t n);
+  
   void writecommand(uint8_t *cmd, uint8_t cmdlen);
   bool isready();
   bool waitready(uint16_t timeout);
