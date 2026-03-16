@@ -59,9 +59,11 @@
 
 #include "Adafruit_PN532.h"
 
-byte pn532ack[] = {0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00}; ///< ACK message from PN532
+byte pn532ack[] = {0x00, 0x00, 0xFF,
+                   0x00, 0xFF, 0x00}; ///< ACK message from PN532
 byte pn532response_firmwarevers[] = {
-    0x00, 0x00, 0xFF, 0x06, 0xFA, 0xD5}; ///< Expected firmware version message from PN532
+    0x00, 0x00, 0xFF,
+    0x06, 0xFA, 0xD5}; ///< Expected firmware version message from PN532
 
 // Uncomment these lines to enable debug output for PN532(SPI) and/or MIFARE
 // related code
@@ -89,10 +91,12 @@ Adafruit_PN532::Adafruit_PN532() {}
     @param  ss        SPI chip select pin (CS/SSEL)
 */
 /**************************************************************************/
-Adafruit_PN532::Adafruit_PN532(uint8_t clk, uint8_t miso, uint8_t mosi, uint8_t ss)
+Adafruit_PN532::Adafruit_PN532(uint8_t clk, uint8_t miso, uint8_t mosi,
+                               uint8_t ss)
 {
   _cs = ss;
-  spi_dev = new Adafruit_SPIDevice(ss, clk, miso, mosi, 1000000, SPI_BITORDER_LSBFIRST, SPI_MODE0);
+  spi_dev = new Adafruit_SPIDevice(ss, clk, miso, mosi, 1000000,
+                                   SPI_BITORDER_LSBFIRST, SPI_MODE0);
 }
 
 /**************************************************************************/
@@ -104,7 +108,8 @@ Adafruit_PN532::Adafruit_PN532(uint8_t clk, uint8_t miso, uint8_t mosi, uint8_t 
     @param  theWire   pointer to I2C bus to use
 */
 /**************************************************************************/
-Adafruit_PN532::Adafruit_PN532(uint8_t irq, uint8_t reset, TwoWire *theWire) : _irq(irq), _reset(reset)
+Adafruit_PN532::Adafruit_PN532(uint8_t irq, uint8_t reset, TwoWire *theWire)
+    : _irq(irq), _reset(reset)
 {
   pinMode(_irq, INPUT);
   pinMode(_reset, OUTPUT);
@@ -122,7 +127,8 @@ Adafruit_PN532::Adafruit_PN532(uint8_t irq, uint8_t reset, TwoWire *theWire) : _
 Adafruit_PN532::Adafruit_PN532(uint8_t ss, SPIClass *theSPI)
 {
   _cs = ss;
-  spi_dev = new Adafruit_SPIDevice(ss, 1000000, SPI_BITORDER_LSBFIRST, SPI_MODE0, theSPI);
+  spi_dev = new Adafruit_SPIDevice(ss, 1000000, SPI_BITORDER_LSBFIRST,
+                                   SPI_MODE0, theSPI);
 }
 
 /**************************************************************************/
@@ -133,7 +139,8 @@ Adafruit_PN532::Adafruit_PN532(uint8_t ss, SPIClass *theSPI)
     @param  theSer    pointer to HardWare Serial bus to use
 */
 /**************************************************************************/
-Adafruit_PN532::Adafruit_PN532(uint8_t reset, HardwareSerial *theSer) : _reset(reset)
+Adafruit_PN532::Adafruit_PN532(uint8_t reset, HardwareSerial *theSer)
+    : _reset(reset)
 {
   pinMode(_reset, OUTPUT);
   ser_dev = theSer;
@@ -339,7 +346,8 @@ uint32_t Adafruit_PN532::getFirmwareVersion(void)
   readdata(pn532_packetbuffer, 13);
 
   // check some basic stuff
-  if (0 != memcmp((char *)pn532_packetbuffer, (char *)pn532response_firmwarevers, 6))
+  if (0 != memcmp((char *)pn532_packetbuffer,
+                  (char *)pn532response_firmwarevers, 6))
   {
 #ifdef PN532DEBUG
     PN532DEBUGPRINT.println(F("Firmware doesn't match!"));
@@ -372,7 +380,8 @@ uint32_t Adafruit_PN532::getFirmwareVersion(void)
 */
 /**************************************************************************/
 // default timeout of one second
-bool Adafruit_PN532::sendCommandCheckAck(uint8_t *cmd, uint8_t cmdlen, uint16_t timeout)
+bool Adafruit_PN532::sendCommandCheckAck(uint8_t *cmd, uint8_t cmdlen,
+                                         uint16_t timeout)
 {
 
   // I2C works without using IRQ pin by polling for RDY byte
@@ -622,8 +631,8 @@ bool Adafruit_PN532::setPassiveActivationRetries(uint8_t maxRetries)
     @return  1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-bool Adafruit_PN532::readPassiveTargetID(
-    uint8_t cardbaudrate, uint8_t *uid, uint8_t *uidLength, uint16_t timeout)
+bool Adafruit_PN532::readPassiveTargetID(uint8_t cardbaudrate, uint8_t *uid,
+                                         uint8_t *uidLength, uint16_t timeout)
 {
   pn532_packetbuffer[0] = PN532_COMMAND_INLISTPASSIVETARGET;
   pn532_packetbuffer[1] = 1; // max 1 cards at once (we can set this to 2 later)
@@ -669,7 +678,8 @@ bool Adafruit_PN532::startPassiveTargetIDDetection(uint8_t cardbaudrate)
     @returns 1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-bool Adafruit_PN532::readDetectedPassiveTargetID(uint8_t *uid, uint8_t *uidLength)
+bool Adafruit_PN532::readDetectedPassiveTargetID(uint8_t *uid,
+                                                 uint8_t *uidLength)
 {
   // read data packet
   readdata(pn532_packetbuffer, 20);
@@ -698,9 +708,8 @@ bool Adafruit_PN532::readDetectedPassiveTargetID(uint8_t *uid, uint8_t *uidLengt
   uint16_t sens_res = pn532_packetbuffer[9];
   sens_res <<= 8;
   sens_res |= pn532_packetbuffer[10];
-  // Per funzioni tessere
+  _lastATQA = sens_res;
   _lastSAK = pn532_packetbuffer[11];
-  _lastATQA = (pn532_packetbuffer[9] << 8) | pn532_packetbuffer[10];
 #ifdef MIFAREDEBUG
   PN532DEBUGPRINT.print(F("ATQA: 0x"));
   PN532DEBUGPRINT.println(sens_res, HEX);
@@ -848,8 +857,9 @@ String Adafruit_PN532::PICC_GetTypeName(byte sak)
     @author Andrea Canale(https://github.com/andreock)
 */
 /**************************************************************************/
-bool Adafruit_PN532::EMVinDataExchange(
-    uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength)
+bool Adafruit_PN532::EMVinDataExchange(uint8_t *send, uint8_t sendLength,
+                                       uint8_t *response,
+                                       uint8_t *responseLength)
 {
   if (sendLength > PN532_PACKBUFFSIZ - 2)
   {
@@ -884,7 +894,8 @@ bool Adafruit_PN532::EMVinDataExchange(
   }
 
   readdata(pn532_packetbuffer, sizeof(pn532_packetbuffer));
-  if (pn532_packetbuffer[0] == 0 && pn532_packetbuffer[1] == 0 && pn532_packetbuffer[2] == 0xff)
+  if (pn532_packetbuffer[0] == 0 && pn532_packetbuffer[1] == 0 &&
+      pn532_packetbuffer[2] == 0xff)
   {
     uint8_t length = 0;
     for (size_t i = 0; i < 240; i++)
@@ -944,8 +955,9 @@ bool Adafruit_PN532::EMVinDataExchange(
     @return  true on success, false otherwise.
 */
 /**************************************************************************/
-bool Adafruit_PN532::inDataExchange(
-    uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength)
+bool Adafruit_PN532::inDataExchange(uint8_t *send, uint8_t sendLength,
+                                    uint8_t *response,
+                                    uint8_t *responseLength)
 {
   if (sendLength > PN532_PACKBUFFSIZ - 2)
   {
@@ -981,7 +993,8 @@ bool Adafruit_PN532::inDataExchange(
 
   readdata(pn532_packetbuffer, sizeof(pn532_packetbuffer));
 
-  if (pn532_packetbuffer[0] == 0 && pn532_packetbuffer[1] == 0 && pn532_packetbuffer[2] == 0xff)
+  if (pn532_packetbuffer[0] == 0 && pn532_packetbuffer[1] == 0 &&
+      pn532_packetbuffer[2] == 0xff)
   {
     uint8_t length = pn532_packetbuffer[3];
     if (pn532_packetbuffer[4] != (uint8_t)(~length + 1))
@@ -1065,7 +1078,8 @@ bool Adafruit_PN532::inListPassiveTarget()
 
   readdata(pn532_packetbuffer, sizeof(pn532_packetbuffer));
 
-  if (pn532_packetbuffer[0] == 0 && pn532_packetbuffer[1] == 0 && pn532_packetbuffer[2] == 0xff)
+  if (pn532_packetbuffer[0] == 0 && pn532_packetbuffer[1] == 0 &&
+      pn532_packetbuffer[2] == 0xff)
   {
     uint8_t length = pn532_packetbuffer[3];
     if (pn532_packetbuffer[4] != (uint8_t)(~length + 1))
@@ -1128,42 +1142,15 @@ bool Adafruit_PN532::TgInitAsTarget()
       PN532_COMMAND_TGINITASTARGET,
       0x05, // MODE: PICC only, Passive only
 
-      0x04,
-      0x00, // SENS_RES
-      0x12,
-      0x34,
-      0x56, // NFCID1
-      0x20, // SEL_RES
+      0x04, 0x00,       // SENS_RES
+      0x12, 0x34, 0x56, // NFCID1
+      0x20,             // SEL_RES
 
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0, // FeliCaParams
-      0,
-      0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, // FeliCaParams
+      0, 0,
 
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0, // NFCID3t
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // NFCID3t
 
       0, // length of general bytes
       0  // length of historical bytes
@@ -1343,8 +1330,11 @@ bool Adafruit_PN532::mifareclassic_IsTrailerBlock(uint32_t uiBlock)
     @returns 1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-uint8_t Adafruit_PN532::mifareclassic_AuthenticateBlock(
-    uint8_t *uid, uint8_t uidLen, uint32_t blockNumber, uint8_t keyNumber, uint8_t *keyData)
+uint8_t Adafruit_PN532::mifareclassic_AuthenticateBlock(uint8_t *uid,
+                                                        uint8_t uidLen,
+                                                        uint32_t blockNumber,
+                                                        uint8_t keyNumber,
+                                                        uint8_t *keyData)
 {
   // uint8_t len;
   uint8_t i;
@@ -1364,10 +1354,12 @@ uint8_t Adafruit_PN532::mifareclassic_AuthenticateBlock(
 #endif
 
   // Prepare the authentication command //
-  pn532_packetbuffer[0] = PN532_COMMAND_INDATAEXCHANGE; /* Data Exchange Header */
-  pn532_packetbuffer[1] = 1;                            /* Max card numbers */
+  pn532_packetbuffer[0] =
+      PN532_COMMAND_INDATAEXCHANGE; /* Data Exchange Header */
+  pn532_packetbuffer[1] = 1;        /* Max card numbers */
   pn532_packetbuffer[2] = (keyNumber) ? MIFARE_CMD_AUTH_B : MIFARE_CMD_AUTH_A;
-  pn532_packetbuffer[3] = blockNumber; /* Block Number (1K = 0..63, 4K = 0..255 */
+  pn532_packetbuffer[3] =
+      blockNumber; /* Block Number (1K = 0..63, 4K = 0..255 */
   memcpy(pn532_packetbuffer + 4, _key, 6);
   for (i = 0; i < _uidLen; i++)
   {
@@ -1409,7 +1401,8 @@ uint8_t Adafruit_PN532::mifareclassic_AuthenticateBlock(
     @returns 1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-uint8_t Adafruit_PN532::mifareclassic_ReadDataBlock(uint8_t blockNumber, uint8_t *data)
+uint8_t Adafruit_PN532::mifareclassic_ReadDataBlock(uint8_t blockNumber,
+                                                    uint8_t *data)
 {
 #ifdef MIFAREDEBUG
   PN532DEBUGPRINT.print(F("Trying to read 16 bytes from block "));
@@ -1420,7 +1413,8 @@ uint8_t Adafruit_PN532::mifareclassic_ReadDataBlock(uint8_t blockNumber, uint8_t
   pn532_packetbuffer[0] = PN532_COMMAND_INDATAEXCHANGE;
   pn532_packetbuffer[1] = 1;               /* Card number */
   pn532_packetbuffer[2] = MIFARE_CMD_READ; /* Mifare Read command = 0x30 */
-  pn532_packetbuffer[3] = blockNumber;     /* Block Number (0..63 for 1K, 0..255 for 4K) */
+  pn532_packetbuffer[3] =
+      blockNumber; /* Block Number (0..63 for 1K, 0..255 for 4K) */
 
   /* Send the command */
   if (!sendCommandCheckAck(pn532_packetbuffer, 4))
@@ -1470,7 +1464,8 @@ uint8_t Adafruit_PN532::mifareclassic_ReadDataBlock(uint8_t blockNumber, uint8_t
     @returns 1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-uint8_t Adafruit_PN532::mifareclassic_WriteDataBlock(uint8_t blockNumber, uint8_t *data)
+uint8_t Adafruit_PN532::mifareclassic_WriteDataBlock(uint8_t blockNumber,
+                                                     uint8_t *data)
 {
 #ifdef MIFAREDEBUG
   PN532DEBUGPRINT.print(F("Trying to write 16 bytes to block "));
@@ -1481,7 +1476,8 @@ uint8_t Adafruit_PN532::mifareclassic_WriteDataBlock(uint8_t blockNumber, uint8_
   pn532_packetbuffer[0] = PN532_COMMAND_INDATAEXCHANGE;
   pn532_packetbuffer[1] = 1;                /* Card number */
   pn532_packetbuffer[2] = MIFARE_CMD_WRITE; /* Mifare Write command = 0xA0 */
-  pn532_packetbuffer[3] = blockNumber;      /* Block Number (0..63 for 1K, 0..255 for 4K) */
+  pn532_packetbuffer[3] =
+      blockNumber;                          /* Block Number (0..63 for 1K, 0..255 for 4K) */
   memcpy(pn532_packetbuffer + 4, data, 16); /* Data Payload */
 
   /* Send the command */
@@ -1509,12 +1505,12 @@ uint8_t Adafruit_PN532::mifareclassic_WriteDataBlock(uint8_t blockNumber, uint8_
 /**************************************************************************/
 uint8_t Adafruit_PN532::mifareclassic_FormatNDEF(void)
 {
-  uint8_t sectorbuffer1[16] = {
-      0x14, 0x01, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1};
-  uint8_t sectorbuffer2[16] = {
-      0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1};
-  uint8_t sectorbuffer3[16] = {
-      0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0x78, 0x77, 0x88, 0xC1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+  uint8_t sectorbuffer1[16] = {0x14, 0x01, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1,
+                               0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1};
+  uint8_t sectorbuffer2[16] = {0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1,
+                               0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1, 0x03, 0xE1};
+  uint8_t sectorbuffer3[16] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0x78, 0x77,
+                               0x88, 0xC1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
   // Note 0xA0 0xA1 0xA2 0xA3 0xA4 0xA5 must be used for key A
   // for the MAD sector in NDEF records (sector 0)
@@ -1550,8 +1546,9 @@ uint8_t Adafruit_PN532::mifareclassic_FormatNDEF(void)
     @returns 1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-uint8_t
-Adafruit_PN532::mifareclassic_WriteNDEFURI(uint8_t sectorNumber, uint8_t uriIdentifier, const char *url)
+uint8_t Adafruit_PN532::mifareclassic_WriteNDEFURI(uint8_t sectorNumber,
+                                                   uint8_t uriIdentifier,
+                                                   const char *url)
 {
   // Figure out how long the string is
   uint8_t len = strlen(url);
@@ -1568,29 +1565,28 @@ Adafruit_PN532::mifareclassic_WriteNDEFURI(uint8_t sectorNumber, uint8_t uriIden
   // in NDEF records
 
   // Setup the sector buffer (w/pre-formatted TLV wrapper and NDEF message)
-  uint8_t sectorbuffer1[16] = {
-      0x00,
-      0x00,
-      0x03,
-      (uint8_t)(len + 5),
-      0xD1,
-      0x01,
-      (uint8_t)(len + 1),
-      0x55,
-      uriIdentifier,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00};
-  uint8_t sectorbuffer2[16] = {
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  uint8_t sectorbuffer3[16] = {
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  uint8_t sectorbuffer4[16] = {
-      0xD3, 0xF7, 0xD3, 0xF7, 0xD3, 0xF7, 0x7F, 0x07, 0x88, 0x40, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+  uint8_t sectorbuffer1[16] = {0x00,
+                               0x00,
+                               0x03,
+                               (uint8_t)(len + 5),
+                               0xD1,
+                               0x01,
+                               (uint8_t)(len + 1),
+                               0x55,
+                               uriIdentifier,
+                               0x00,
+                               0x00,
+                               0x00,
+                               0x00,
+                               0x00,
+                               0x00,
+                               0x00};
+  uint8_t sectorbuffer2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  uint8_t sectorbuffer3[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  uint8_t sectorbuffer4[16] = {0xD3, 0xF7, 0xD3, 0xF7, 0xD3, 0xF7, 0x7F, 0x07,
+                               0x88, 0x40, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
   if (len <= 6)
   {
     // Unlikely we'll get a url this short, but why not ...
@@ -1652,7 +1648,8 @@ Adafruit_PN532::mifareclassic_WriteNDEFURI(uint8_t sectorNumber, uint8_t uriIden
     @return  1 on success, 0 on error.
 */
 /**************************************************************************/
-uint8_t Adafruit_PN532::mifareultralight_ReadPage(uint8_t page, uint8_t *buffer)
+uint8_t Adafruit_PN532::mifareultralight_ReadPage(uint8_t page,
+                                                  uint8_t *buffer)
 {
   if (page >= 64)
   {
@@ -1732,7 +1729,8 @@ uint8_t Adafruit_PN532::mifareultralight_ReadPage(uint8_t page, uint8_t *buffer)
     @returns 1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-uint8_t Adafruit_PN532::mifareultralight_WritePage(uint8_t page, uint8_t *data)
+uint8_t Adafruit_PN532::mifareultralight_WritePage(uint8_t page,
+                                                   uint8_t *data)
 {
 
   if (page >= 64)
@@ -1751,10 +1749,11 @@ uint8_t Adafruit_PN532::mifareultralight_WritePage(uint8_t page, uint8_t *data)
 
   /* Prepare the first command */
   pn532_packetbuffer[0] = PN532_COMMAND_INDATAEXCHANGE;
-  pn532_packetbuffer[1] = 1;                           /* Card number */
-  pn532_packetbuffer[2] = MIFARE_ULTRALIGHT_CMD_WRITE; /* Mifare Ultralight Write command = 0xA2 */
-  pn532_packetbuffer[3] = page;                        /* Page Number (0..63 for most cases) */
-  memcpy(pn532_packetbuffer + 4, data, 4);             /* Data Payload */
+  pn532_packetbuffer[1] = 1; /* Card number */
+  pn532_packetbuffer[2] =
+      MIFARE_ULTRALIGHT_CMD_WRITE;         /* Mifare Ultralight Write command = 0xA2 */
+  pn532_packetbuffer[3] = page;            /* Page Number (0..63 for most cases) */
+  memcpy(pn532_packetbuffer + 4, data, 4); /* Data Payload */
 
   /* Send the command */
   if (!sendCommandCheckAck(pn532_packetbuffer, 8))
@@ -1899,10 +1898,11 @@ uint8_t Adafruit_PN532::ntag2xx_WritePage(uint8_t page, uint8_t *data)
 
   /* Prepare the first command */
   pn532_packetbuffer[0] = PN532_COMMAND_INDATAEXCHANGE;
-  pn532_packetbuffer[1] = 1;                           /* Card number */
-  pn532_packetbuffer[2] = MIFARE_ULTRALIGHT_CMD_WRITE; /* Mifare Ultralight Write command = 0xA2 */
-  pn532_packetbuffer[3] = page;                        /* Page Number (0..63 for most cases) */
-  memcpy(pn532_packetbuffer + 4, data, 4);             /* Data Payload */
+  pn532_packetbuffer[1] = 1; /* Card number */
+  pn532_packetbuffer[2] =
+      MIFARE_ULTRALIGHT_CMD_WRITE;         /* Mifare Ultralight Write command = 0xA2 */
+  pn532_packetbuffer[3] = page;            /* Page Number (0..63 for most cases) */
+  memcpy(pn532_packetbuffer + 4, data, 4); /* Data Payload */
 
   /* Send the command */
   if (!sendCommandCheckAck(pn532_packetbuffer, 8))
@@ -1938,7 +1938,8 @@ uint8_t Adafruit_PN532::ntag2xx_WritePage(uint8_t page, uint8_t *data)
     @returns 1 if everything executed properly, 0 for an error
 */
 /**************************************************************************/
-uint8_t Adafruit_PN532::ntag2xx_WriteNDEFURI(uint8_t uriIdentifier, char *url, uint8_t dataLen)
+uint8_t Adafruit_PN532::ntag2xx_WriteNDEFURI(uint8_t uriIdentifier, char *url,
+                                             uint8_t dataLen)
 {
   uint8_t pageBuffer[4] = {0, 0, 0, 0};
 
@@ -2049,9 +2050,10 @@ uint8_t Adafruit_PN532::ntag2xx_WriteNDEFURI(uint8_t uriIdentifier, char *url, u
                                        = 0: No card has detected
 */
 /**************************************************************************/
-uint8_t Adafruit_PN532::felica_Polling(
-    uint16_t systemCode, uint8_t requestCode, uint8_t *idm, uint8_t *pmm, uint16_t *systemCodeResponse,
-    uint16_t timeout)
+uint8_t Adafruit_PN532::felica_Polling(uint16_t systemCode, uint8_t requestCode,
+                                       uint8_t *idm, uint8_t *pmm,
+                                       uint16_t *systemCodeResponse,
+                                       uint16_t timeout)
 {
   pn532_packetbuffer[0] = PN532_COMMAND_INLISTPASSIVETARGET;
   pn532_packetbuffer[1] = 1;
@@ -2106,7 +2108,8 @@ uint8_t Adafruit_PN532::felica_Polling(
   memcpy(pmm, &pn532_packetbuffer[19], 8);
   memcpy(_felicaPMm, &pn532_packetbuffer[19], 8);
   if (requestCode == 0x01)
-    *systemCodeResponse = (pn532_packetbuffer[27] << 8) + pn532_packetbuffer[28];
+    *systemCodeResponse =
+        (pn532_packetbuffer[27] << 8) + pn532_packetbuffer[28];
 
   return 1;
 }
@@ -2126,8 +2129,9 @@ uint8_t Adafruit_PN532::felica_Polling(
                                      = 0: error
 */
 /**************************************************************************/
-uint8_t
-Adafruit_PN532::felica_SendCommand(const uint8_t *command, uint8_t commandlength, uint8_t responseLength)
+uint8_t Adafruit_PN532::felica_SendCommand(const uint8_t *command,
+                                           uint8_t commandlength,
+                                           uint8_t responseLength)
 {
   if (commandlength > 0xFE)
   {
@@ -2171,8 +2175,8 @@ Adafruit_PN532::felica_SendCommand(const uint8_t *command, uint8_t commandlength
 */
 /**************************************************************************/
 uint8_t Adafruit_PN532::felica_ReadWithoutEncryption(
-    uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
-    uint8_t blockData[][16])
+    uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock,
+    const uint16_t *blockList, uint8_t blockData[][16])
 {
   if (numService > FELICA_READ_MAX_SERVICE_NUM)
   {
@@ -2261,8 +2265,8 @@ uint8_t Adafruit_PN532::felica_ReadWithoutEncryption(
 */
 /**************************************************************************/
 uint8_t Adafruit_PN532::felica_WriteWithoutEncryption(
-    uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
-    uint8_t blockData[][16])
+    uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock,
+    const uint16_t *blockList, uint8_t blockData[][16])
 {
   if (numService > FELICA_WRITE_MAX_SERVICE_NUM)
   {
@@ -2280,7 +2284,8 @@ uint8_t Adafruit_PN532::felica_WriteWithoutEncryption(
   }
 
   uint8_t i, k;
-  uint8_t cmdLen = 1 + 8 + 1 + 2 * numService + 1 + 2 * numBlock + 16 * numBlock;
+  uint8_t cmdLen =
+      1 + 8 + 1 + 2 * numService + 1 + 2 * numBlock + 16 * numBlock;
   uint8_t cmd[cmdLen];
   cmd[0] = FELICA_CMD_WRITE_WITHOUT_ENCRYPTION;
   memcpy(&cmd[1], _felicaIDm, 8); // Fill card IDm
@@ -2316,7 +2321,8 @@ uint8_t Adafruit_PN532::felica_WriteWithoutEncryption(
   if (pn532_packetbuffer[9] != 0x09)
   {
 #ifdef PN532DEBUG
-    PN532DEBUGPRINT.printf("Response code doesn't match. Status: %i\n", pn532_packetbuffer[9]);
+    PN532DEBUGPRINT.printf("Response code doesn't match. Status: %i\n",
+                           pn532_packetbuffer[9]);
 #endif
     return 0;
   }
@@ -2493,59 +2499,19 @@ uint8_t Adafruit_PN532::AsTarget()
 {
   pn532_packetbuffer[0] = 0x8C;
   uint8_t target[] = {
-      0x8C, // INIT AS TARGET
-      0x00, // MODE -> BITFIELD
-      0x08,
-      0x00, // SENS_RES - MIFARE PARAMS
-      0xdc,
-      0x44,
-      0x20, // NFCID1T
-      0x60, // SEL_RES
-      0x01,
-      0xfe, // NFCID2T MUST START WITH 01fe - FELICA PARAMS - POL_RES
-      0xa2,
-      0xa3,
-      0xa4,
-      0xa5,
-      0xa6,
-      0xa7,
-      0xc0,
-      0xc1,
-      0xc2,
-      0xc3,
-      0xc4,
-      0xc5,
-      0xc6,
-      0xc7, // PAD
-      0xff,
-      0xff, // SYSTEM CODE
-      0xaa,
-      0x99,
-      0x88,
-      0x77,
-      0x66,
-      0x55,
-      0x44,
-      0x33,
-      0x22,
-      0x11,
-      0x01,
-      0x00, // NFCID3t MAX 47 BYTES
-            // ATR_RES
-      0x0d,
-      0x52,
-      0x46,
-      0x49,
-      0x44,
-      0x49,
-      0x4f,
-      0x74,
-      0x20,
-      0x50,
-      0x4e,
-      0x35,
-      0x33,
-      0x32 // HISTORICAL BYTES
+      0x8C,             // INIT AS TARGET
+      0x00,             // MODE -> BITFIELD
+      0x08, 0x00,       // SENS_RES - MIFARE PARAMS
+      0xdc, 0x44, 0x20, // NFCID1T
+      0x60,             // SEL_RES
+      0x01, 0xfe,       // NFCID2T MUST START WITH 01fe - FELICA PARAMS - POL_RES
+      0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xc0,
+      0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, // PAD
+      0xff, 0xff,                               // SYSTEM CODE
+      0xaa, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44,
+      0x33, 0x22, 0x11, 0x01, 0x00, // NFCID3t MAX 47 BYTES ATR_RES
+      0x0d, 0x52, 0x46, 0x49, 0x44, 0x49, 0x4f,
+      0x74, 0x20, 0x50, 0x4e, 0x35, 0x33, 0x32 // HISTORICAL BYTES
   };
   if (!sendCommandCheckAck(target, sizeof(target)))
     return false;

@@ -141,11 +141,14 @@
 #define PN532_GPIO_P35 (5)              ///< GPIO 35
 
 // FeliCa consts
-#define FELICA_READ_MAX_SERVICE_NUM 16     ///< Maximum number of services code during reading
-#define FELICA_READ_MAX_BLOCK_NUM 12       ///< for typical FeliCa card
-#define FELICA_WRITE_MAX_SERVICE_NUM 16    ///< Maximum number of services code during writing
-#define FELICA_WRITE_MAX_BLOCK_NUM 10      ///< for typical FeliCa card
-#define FELICA_REQ_SERVICE_MAX_NODE_NUM 32 ///< Max node for a request service call
+#define FELICA_READ_MAX_SERVICE_NUM \
+    16                               ///< Maximum number of services code during reading
+#define FELICA_READ_MAX_BLOCK_NUM 12 ///< for typical FeliCa card
+#define FELICA_WRITE_MAX_SERVICE_NUM \
+    16                                ///< Maximum number of services code during writing
+#define FELICA_WRITE_MAX_BLOCK_NUM 10 ///< for typical FeliCa card
+#define FELICA_REQ_SERVICE_MAX_NODE_NUM \
+    32 ///< Max node for a request service call
 
 /**
  * @brief Class for working with Adafruit PN532 NFC/RFID breakout boards.
@@ -182,7 +185,8 @@ public:
     // Generic PN532 functions
     bool SAMConfig(void);
     uint32_t getFirmwareVersion(void);
-    bool sendCommandCheckAck(uint8_t *cmd, uint8_t cmdlen, uint16_t timeout = 100);
+    bool sendCommandCheckAck(uint8_t *cmd, uint8_t cmdlen,
+                             uint16_t timeout = 100);
     bool writeGPIO(uint8_t pinstate);
     uint8_t readGPIO(void);
     bool setPassiveActivationRetries(uint8_t maxRetries);
@@ -195,7 +199,8 @@ public:
     bool startPassiveTargetIDDetection(uint8_t cardbaudrate = PN532_MIFARE_ISO14443A);
     bool readDetectedPassiveTargetID(uint8_t *uid, uint8_t *uidLength);
     bool readDetectedPassiveTargetID();
-    bool inDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength);
+    bool inDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response,
+                        uint8_t *responseLength);
     bool inListPassiveTarget();
     uint8_t AsTarget();
     uint8_t getDataTarget(uint8_t *cmd, uint8_t *cmdlen);
@@ -205,19 +210,22 @@ public:
     bool TgSetData(uint8_t *send, uint8_t sendLength);
     int16_t inRelease(const uint8_t relevantTarget = 0);
 
-    bool EMVinDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response, uint8_t *responseLength);
+    bool EMVinDataExchange(uint8_t *send, uint8_t sendLength, uint8_t *response,
+                           uint8_t *responseLength);
 
     // Mifare Classic functions
     bool UnlockBackdoor();
     bool mifareclassic_WriteBlock0(uint8_t *data);
     bool mifareclassic_IsFirstBlock(uint32_t uiBlock);
     bool mifareclassic_IsTrailerBlock(uint32_t uiBlock);
-    uint8_t mifareclassic_AuthenticateBlock(
-        uint8_t *uid, uint8_t uidLen, uint32_t blockNumber, uint8_t keyNumber, uint8_t *keyData);
+    uint8_t mifareclassic_AuthenticateBlock(uint8_t *uid, uint8_t uidLen,
+                                            uint32_t blockNumber,
+                                            uint8_t keyNumber, uint8_t *keyData);
     uint8_t mifareclassic_ReadDataBlock(uint8_t blockNumber, uint8_t *data);
     uint8_t mifareclassic_WriteDataBlock(uint8_t blockNumber, uint8_t *data);
     uint8_t mifareclassic_FormatNDEF(void);
-    uint8_t mifareclassic_WriteNDEFURI(uint8_t sectorNumber, uint8_t uriIdentifier, const char *url);
+    uint8_t mifareclassic_WriteNDEFURI(uint8_t sectorNumber,
+                                       uint8_t uriIdentifier, const char *url);
 
     // Mifare Ultralight functions
     uint8_t mifareultralight_ReadPage(uint8_t page, uint8_t *buffer);
@@ -226,26 +234,31 @@ public:
     // NTAG2xx functions
     uint8_t ntag2xx_ReadPage(uint8_t page, uint8_t *buffer);
     uint8_t ntag2xx_WritePage(uint8_t page, uint8_t *data);
-    uint8_t ntag2xx_WriteNDEFURI(uint8_t uriIdentifier, char *url, uint8_t dataLen);
+    uint8_t ntag2xx_WriteNDEFURI(uint8_t uriIdentifier, char *url,
+                                 uint8_t dataLen);
 
     // Felica functions
-    uint8_t felica_Polling(
-        uint16_t systemCode, uint8_t requestCode, uint8_t *idm, uint8_t *pmm, uint16_t *systemCodeResponse,
-        uint16_t timeout = 100);
-    uint8_t felica_SendCommand(const uint8_t *command, uint8_t commandlength, uint8_t responseLength);
-    uint8_t felica_ReadWithoutEncryption(
-        uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
-        uint8_t blockData[][16]);
-    uint8_t felica_WriteWithoutEncryption(
-        uint8_t numService, const uint16_t *serviceCodeList, uint8_t numBlock, const uint16_t *blockList,
-        uint8_t blockData[][16]);
+    uint8_t felica_Polling(uint16_t systemCode, uint8_t requestCode, uint8_t *idm,
+                           uint8_t *pmm, uint16_t *systemCodeResponse,
+                           uint16_t timeout = 100);
+    uint8_t felica_SendCommand(const uint8_t *command, uint8_t commandlength,
+                               uint8_t responseLength);
+    uint8_t felica_ReadWithoutEncryption(uint8_t numService,
+                                         const uint16_t *serviceCodeList,
+                                         uint8_t numBlock,
+                                         const uint16_t *blockList,
+                                         uint8_t blockData[][16]);
+    uint8_t felica_WriteWithoutEncryption(uint8_t numService,
+                                          const uint16_t *serviceCodeList,
+                                          uint8_t numBlock,
+                                          const uint16_t *blockList,
+                                          uint8_t blockData[][16]);
     uint8_t felica_Release();
 
     // Help functions to display formatted text
     static void PrintHex(const byte *data, const uint32_t numBytes);
     static void PrintHexChar(const byte *pbtData, const uint32_t numBytes);
 
-    // Per funzioni tessere
     uint8_t getLastSAK() { return _lastSAK; }
     uint16_t getLastATQA() { return _lastATQA; }
 
@@ -257,8 +270,6 @@ private:
     int8_t _inListedTag;   // Tg number of inlisted tag.
     uint8_t _felicaIDm[8]; // FeliCa IDm (NFCID2)
     uint8_t _felicaPMm[8]; // FeliCa PMm (PAD)
-
-    // Per funzioni tessere
     uint8_t _lastSAK = 0;
     uint16_t _lastATQA = 0;
 
